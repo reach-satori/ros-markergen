@@ -56,17 +56,30 @@ int main(int argc, char* argv[]) {
          for (int i = 0; i<= 2; i++) {
             std::getline(path_file, xyz[i], '\0');
          }// gets 3 values from the file(x, y, z)
+      } else {
+         path_file.close();
+         return 0;
       }
       visualization_msgs::Marker primarker;
       Marker_Utility::createMarker(&primarker);
       ////
-      primarker.pose.position.x = std::stof(xyz[0]);
-      primarker.pose.position.y = std::stof(xyz[1]);
-      primarker.pose.position.z = std::stof(xyz[2]);
+      try {
+         primarker.pose.position.x = std::stof(xyz[0]);
+         primarker.pose.position.y = std::stof(xyz[1]);
+         primarker.pose.position.z = std::stof(xyz[2]);
+      } catch ( const std::exception& e ) {
+         ROS_INFO("Expected exception caught: end of file");
+         ROS_INFO("Ending routine...");
+         ROS_INFO( e.what());
+         path_file.close();
+         return 0;
+      }
+
       markerpub.publish(primarker);
       r.sleep();
    }//while (ros::ok     
 //delicious imperative code
 //classes suck
+return 0;
 }
 
